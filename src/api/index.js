@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Create a new instance of axios using a baseURL
-const API = axios.create({ baseURL: 'http://localhost:5000' });
+const API = axios.create({ baseURL: 'https://baek-gom-server.onrender.com/' });
 
 // Add a request interceptor to attach the token stored in-memory before sending the request
 API.interceptors.request.use((req) => {
