@@ -23,19 +23,19 @@ const DivRecommendedItem = styled.div(postDetailsStyles.recommendedPost);
 const ImgRecommended = styled.img(postDetailsStyles.recommendedImg);
 const DivImgContainer = styled.div(postDetailsStyles.imgContainer);
 
+// Component for the post detail page
 const PostDetails = () => {
   const { post, recommends, isLoading } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  console.log("PostDetails is Rendered")
-
+  // Hook to fetch the post data when the query param id changes
   useEffect(() => {
-    console.log("UPDATE POST DETAILS")
     dispatch(getPostDetails(id))
   }, [id, dispatch]);
-  
+
+  // Renders loading UI when isLoading is true
   if (isLoading) {
     return (
       <Paper sx={postDetailsStyles.loadingPaper} elevation={6}>
@@ -44,6 +44,7 @@ const PostDetails = () => {
     );
   }
 
+  // Renders error UI when post is not found
   if (!post) {
     return (
       <Paper sx={postDetailsStyles.mainContainer} elevation={6}>
@@ -52,6 +53,7 @@ const PostDetails = () => {
     );
   }
 
+  // Handler for navigating to the other post details pages
   const openPost = (_id) => {navigate(`/posts/${_id}`)};
 
   return (

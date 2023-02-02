@@ -8,12 +8,11 @@ import makeStyles from './styles';
 
 const paginateStyles = makeStyles();
 
+// Component for the pagination UI
 const Paginate = ({ page, search, tags }) => {
   const totalPage = useSelector((state) => state.posts.totalPage);
 
-  console.log("Pagination is Rendered");
-  console.log("Pagination Total Page: ", totalPage);
-
+  // Change the search query text by the search & tags props to create links
   const searchQuery = (search || tags) ? `&search=${search || ''}&tags=${tags || ''}` : '';
 
   return (

@@ -10,17 +10,15 @@ const postsStyles = makeStyles();
 
 const DivLoading = styled.div(postsStyles.loading);
 
+// Component for the collection of posts
 const Posts = () => {
   const { posts, isLoading } = useSelector((state) => state.posts);
 
-  console.log("Posts is Rendered")
-  console.log("Posts posts: ", posts);
-  console.log("Posts isLoading: ", isLoading);
-
+  // if it is not loading and post is empty, renders the text 'No posts'
   if (!posts?.length && !isLoading) return 'No posts';
 
   return (
-    isLoading ? 
+    isLoading ?
       <DivLoading>
         <CircularProgress size="7em" />
       </DivLoading> :

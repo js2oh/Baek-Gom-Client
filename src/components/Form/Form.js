@@ -22,36 +22,28 @@ const initialFormState = { title: "", message: "", tags: "", selectedFile: "", }
 const initialHelperState = { title: "", message: "", tags: "", selectedFile: "No image currently selected", };
 const errorMessage = { title: "Title must be less than 60 characters", message: "Message must be less than 600 characters", tag: "Every tag must be less than 20 characters", tags: "Cannot have more than 4 tags", selectedFile: "File is too large", };
 
+// Component for creating/updating post form
 const Form = () => {
   const post = useSelector((state) => state.currentId ? state.posts.posts.find((p) => p._id === state.currentId) : null );
   const user = useSelector((state) => state.auth.authData);
   const [postData, setPostData] = useState(initialFormState);
   const [helperData, setHelperData] = useState(initialHelperState);
-  
-  // const selectPostByCurrentId = createSelector(
-  //   [state=>state.currentId, state=>state.posts],
-  //   (currentId, posts) => (currentId) ? posts.posts.find(p=>p._id===currentId) : null
-  // );
-  // const post = selectPostByCurrentId(state);
-
-  console.log("Form is Rendered")
-  console.log("Form post: ", post);
-  console.log("Form user: ", user);
-  console.log("Form postData: ", postData);
 
   const dispatch = useDispatch();
 
   // When currentId (post) changes, set postData into either post or initial state
   useEffect(() => {
-    console.log("update post from form")
     if (post) setPostData({ ...post, tags: post.tags.join(',')});
     else setPostData(initialFormState);
   }, [post]);
 
+  // Handler for post input form
   const handleSubmit = (event) => {
     event.preventDefault();
     let valid = true;
 
+    // Sanitize the input data
+    // Title should be less than or equal to 60 letters
     if (postData.title.length > 60) {
       valid = false;
       setHelperData((prev) => ({ ...prev, title: `${errorMessage.title} (${postData.title.length}/60)` }));
@@ -59,6 +51,7 @@ const Form = () => {
       setHelperData((prev) => ({ ...prev, title: initialHelperState.title }));
     }
 
+    // Message should be less than or equal to 600 letters
     if (postData.message.length > 600) {
       valid = false;
       setHelperData((prev) => ({ ...prev, message: `${errorMessage.message} (${postData.message.length}/600)`}));
@@ -66,8 +59,10 @@ const Form = () => {
       setHelperData((prev) => ({ ...prev, message: initialHelperState.message}));
     }
 
+    // Seperate the tags into a list of tags
     const cleanTags = formatTags(postData.tags.split(','));
 
+    // There should be less than or equal to 4 tags each of which is under/equal to 20 letters
     if (cleanTags.length > 4) {
       valid = false;
       setHelperData((prev) => ({ ...prev, tags: `${errorMessage.tags} (${cleanTags.length}/4)` }));
@@ -80,20 +75,24 @@ const Form = () => {
       setHelperData((prev) => ({ ...prev, tags: initialHelperState.tags }));
     }
 
+    // Calculate the file size into Mb
     const resizedFileSize = Math.ceil((Buffer.from(postData.selectedFile.split(',')[1], 'base64').toString('utf8').length / 1024 / 1024)*100)/100;
 
+    // File size should be less than or equal to 1Mb
     if (resizedFileSize > 1) {
       valid = false;
       setHelperData((prev) => ({ ...prev, selectedFile: `${errorMessage.selectedFile} (${resizedFileSize}/1MB)` }));
     }
 
+    // If every input data is valid, proceed to create/update post
     if (valid) {
       if (post) dispatch(updatePost(post._id, { ...postData, tags: cleanTags, name: user?.result?.name }));
       else dispatch(createPost({ ...postData, tags: cleanTags, name: user?.result?.name }));
       clear();
     }
   };
-  
+
+  // Handler for clearing the form
   const clear = () => {
     if (post) {
       dispatch(clearCurrentId());
@@ -102,11 +101,14 @@ const Form = () => {
     setHelperData(initialHelperState);
   };
 
+  // Handler for file input
   const fileHandler = (event) => {
     const file = (event.target.files && event.target.files?.length) ? event.target.files[0] : null;
+    // Check if the file exists and is in valid type
     if (file && validFileType(file)) {
       try {
         console.log(`FileSize: ${Math.ceil((file.size/1024/1204)*100)/100} MB`);
+        // Rescale the image into 480 width/height
         Resizer.imageFileResizer(
           event.target.files[0],
           480,
@@ -128,16 +130,17 @@ const Form = () => {
     else console.log("Error: Invalid Image");
   };
 
+  // If the user is not signed-in, unenable the post form
   if (!user) {
     return (
       <Paper sx={{...formStyles.root, ...formStyles.paper}} elevation={6}>
         <Typography variant="h6" align="center">
-          Please Sign-in to create your own Baek GOM post and like other's posts.          
+          Please Sign-in to create your own Baek GOM post and like other's posts.
         </Typography>
       </Paper>
     )
   }
-  
+
   return (
     <Paper sx={{...formStyles.root, ...formStyles.paper}} elevation={6}>
       <StyledForm autoComplete="off" noValidate onSubmit={handleSubmit}>

@@ -15,6 +15,7 @@ const GoogleDiv = styled.div(authStyles.googleButton);
 
 const initialAuthState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' };
 
+// Component for user authentication page
 const Auth = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -23,39 +24,33 @@ const Auth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Handler for submitting the form data and dispatch either sign-up/sign-in action
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isSignup) dispatch(signup(formData, navigate));
     else dispatch(signin(formData, navigate));
   };
+
+  // Handler for controlled input and updating the form data
   const handleChange = (event) => {
     setFormData(prev => ({ ...prev, [event.target.name]: event.target.value }));
   };
+
+  // Handler for showing/hiding password
   const handleShowPassword = () => {
     setShowPassword(prev => !prev);
   };
+
+  // Handler for switching between sign-in and sign-up UI
   const switchMode = () => {
     setIsSignup(prev => !prev);
     setShowPassword(false);
     setFormData(initialAuthState);
   }
 
+  // Callback function to handle sign-in procedure using the returned user credentials
   const handleCredentialResponse = (response) => {
-    // Decoded GIS Token Format
-    /*aud: "591385231772-e18i012p759fhmjj5d8tbkvg744seq76.apps.googleusercontent.com"
-      azp: "591385231772-e18i012p759fhmjj5d8tbkvg744seq76.apps.googleusercontent.com"
-      email: "taxdouble@gmail.com"
-      email_verified: true
-      exp: 1655522664
-      family_name: "Oh"
-      given_name: "Charlie"
-      iat: 1655519064
-      iss: "https://accounts.google.com"
-      jti: "827cd4ba0b0cd2f21ee858eba7808639b1f143ad"
-      name: "Charlie Oh"
-      nbf: 1655518764
-      picture: "https://lh3.googleusercontent.com/a-/AOh14GiWZdQ1UzmD7QJPFVPr42-X7-rljjw9x0U-0Gdcww=s96-c"
-      sub: "102709268847108579742"*/ // The unique ID of the user's Google Account
+    // Google Identiry Service (GIS) Token
     const token = response.credential;
     const { email, family_name: familyName, given_name: givenName, sub: googleId, picture: imageUrl, name } = jwt_decode(response.credential);
     const result = { email, familyName, givenName, googleId, imageUrl, name };
@@ -66,7 +61,8 @@ const Auth = () => {
       console.log(error);
     }
   };
-  
+
+  // Set-up Google One Tap Prompt
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
@@ -75,23 +71,24 @@ const Auth = () => {
     });
 
     google.accounts.id.renderButton(
-      document.getElementById("signInDiv"), 
+      document.getElementById("signInDiv"),
       { theme: "outline", size: "large", width: "364px", }
     );
 
     google.accounts.id.prompt();
   });
 
+  // Resizing the Google Sign-in button using the resize event (WIP)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600) {
         google.accounts.id.renderButton(
-          document.getElementById("signInDiv"), 
+          document.getElementById("signInDiv"),
           { type: "icon", theme: "outline", size: "medium", }
         );
       } else {
         google.accounts.id.renderButton(
-          document.getElementById("signInDiv"), 
+          document.getElementById("signInDiv"),
           { theme: "outline", size: "large", width: "364px", }
         );
       }

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+// Create a new instance of axios using a baseURL
 const API = axios.create({ baseURL: 'http://localhost:5000' });
 
+// Add a request interceptor to attach the token stored in-memory before sending the request
 API.interceptors.request.use((req) => {
   if (localStorage.getItem('profile')) {
     req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;
@@ -9,6 +11,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
+// Axios request functions
 export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
 export const fetchPost = (id) => API.get(`/posts/${id}`);
 export const fetchPostsBySearch = (searchQuery) => API.get(`/posts/search?page=${searchQuery.page}&search=${searchQuery.search || ''}&tags=${searchQuery.tags || ''}`);

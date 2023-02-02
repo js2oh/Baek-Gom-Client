@@ -22,27 +22,30 @@ const DivMore = styled.div(postStyles.overlay2);
 const DivTags = styled.div(postStyles.details);
 const DivPostDetails = styled.div(postStyles.cardAction);
 
+// Component for a single post item
 const Post = ({ post }) => {
   const user = useSelector((state) => state.auth.authData);
-
-  console.log("Post is Rendered");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Handler for editing the post and form data
   const handleEdit = (event) => {
     event.stopPropagation();
     dispatch(setCurrentId(post._id));
   }
 
+  // Handler for deleting the post
   const handleDelete = (event) => {
     dispatch(deletePost(post._id));
   }
 
+  // Handler for like/unlike button
   const handleLike = (event) => {
     dispatch(likePost(post._id));
   }
 
+  // Renders like text with icon
   const Likes = () => {
     const likeCount = post.likes.length;
     if (likeCount > 0) {
@@ -56,6 +59,7 @@ const Post = ({ post }) => {
     return <><ThumbUpAltOutlinedIcon fontSize="small" />&nbsp;Like</>;
   }
 
+  // Handler for navigating to the individual post details pages by clicking on the post
   const openPost = () => {navigate(`/posts/${post._id}`)};
 
   return (

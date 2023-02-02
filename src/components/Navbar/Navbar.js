@@ -17,28 +17,26 @@ const LogoImg = styled.img(navBarStyles.image);
 const DivBrandContainer = styled.div(navBarStyles.brandContainer);
 const DivProfile = styled.div(navBarStyles.profile);
 
+// Component for the top navigation bar
 const NavBar = () => {
   const user = useSelector((state) => state.auth.authData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("NavBar is Rendered")
-  console.log("NavBar user: ", user)
-  console.log("NavBar location: ", location)
-
+  // Handler for signing out
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
   };
 
+  // Hook to handle the log-in status of a user
   useEffect(() => {
-    console.log("useEffect NavBar Persistent Login")
-    // reload login status into redux after navigating or refreshing
+    // Reload login status into redux after navigating or refreshing
     const liveUser = JSON.parse(localStorage.getItem('profile'));
     if (liveUser) dispatch(staySignedin(liveUser.result, liveUser.token));
 
-    // logout the user when token expires after navigating or refreshing
+    // Logout the user when token expires after navigating or refreshing
     const token = liveUser?.token;
     if (token && jwt_decode(token).exp * 1000 < Date.now()) {
       dispatch(logout());

@@ -16,12 +16,8 @@ function App() {
   const user = useSelector((state) => state.auth.authData);
   const dispatch = useDispatch();
 
-  console.log("App is Rendered");
-  console.log("App user: ", user);
-
   // Clear the currentId state and the form (in edit) when the app is re-rendered and updated
   useEffect(()=> {
-    console.log("update app")
     dispatch(clearCurrentId());
   })
 
@@ -34,7 +30,7 @@ function App() {
           <Route path="/posts" element={<Home />} />
           <Route path="/posts/search" element={<Home />} />
           <Route path="/posts/:id" element={<PostDetails />} />
-          <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />    
+          <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
         </Routes>
       </Container>
     </BrowserRouter>

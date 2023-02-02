@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { Autocomplete, Chip, TextField } from '@mui/material';
 
+// Component for Chips UI in the tag searching bar
 const ChipInput = ({setTags}) => {
-  console.log("ChipInput is Rendered")
   return (
     <Autocomplete
       sx={{margin: '10px 0',}}

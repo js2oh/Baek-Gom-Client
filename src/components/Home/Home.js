@@ -16,36 +16,32 @@ import { formatTags } from '../../helper/helper';
 
 const homeStyles = makeStyles();
 
+// Component for the homepage
 const Home = () => {
-  // extracting search parameters from the current URL
+  // Extracting search parameters from the current URL
   const searchParams = new URL(window.location).searchParams;
   const page = searchParams.get('page') || 1;
   const searchQuery = searchParams.get('searchQuery');
   const searchTags = searchParams.get('tags');
 
-  // states for the search and tag input fields
+  // States for the search and tag input fields
   const [search, setSearch] = useState('');
   const [tags, setTags] = useState([]);
-  
-  console.log("Home is Rendered");
-  // console.log(`Home: ${page} ${searchQuery} ${searchTags}`);
-  // console.log(`Home: ${search} ${tags}`);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Hook to search and fetch the post data when the search parameter changes
   useEffect(()=>{
     if (searchQuery?.trim() || searchTags) {
-      console.log("useEffect Home getPostsBySearch")
       dispatch(getPostsBySearch({ page, search: searchQuery, tags: searchTags }));
     }
     else {
-      console.log("useEffect Home getPosts")
       dispatch(getPosts(page));
     }
   }, [dispatch, searchQuery, searchTags, page]);
 
-  // key-down event handler for search input field
+  // Key-down event handler for search input field
   const handleKeyDown = (event) => {
     if (event.keyCode === 13) {
       event.preventDefault();
@@ -53,6 +49,7 @@ const Home = () => {
     }
   };
 
+  // Handler for navigating to a page that searchs the posts
   const searchPost = () => {
     if (search?.trim() || tags) {
       navigate(`/posts/search?searchQuery=${search || ''}&tags=${formatTags(tags).join(',')}`);
@@ -80,7 +77,7 @@ const Home = () => {
             </AppBar>
             <Form></Form>
               <Paper elevation={6} sx={homeStyles.pagination}>
-                <Pagination page={page} search={searchQuery} tags={searchTags} /> 
+                <Pagination page={page} search={searchQuery} tags={searchTags} />
               </Paper>
           </Grid>
         </Grid>
